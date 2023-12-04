@@ -89,8 +89,8 @@ export const AudioPlayer = ({
   return (
     <Grid container spacing={2}>
       <Grid item xs={12} sx={{ height: 200 }}></Grid>
-      <Grid item xs={4}></Grid>
-      <Grid item xs={4}>
+      <Grid item xs={12} md={4}></Grid>
+      <Grid item xs={12} md={4}>
         <Card className='player-card' elevation={4}>
           <IconButton onClick={togglePlay} className='player-button'>
             {isPlaying ? <PauseIcon /> : <PlayIcon />}
@@ -124,7 +124,7 @@ export const AudioPlayer = ({
           </Box>
         </Card>
       </Grid>
-      <Grid item xs={4}></Grid>
+      <Grid item xs={12} md={4}></Grid>
       <Grid item xs={12} sx={{ height: 200 }}></Grid>
       <audio src={src} ref={audioRef} />
     </Grid>
