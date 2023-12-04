@@ -64,12 +64,17 @@ export const AudioPlayer = ({
         const { duration, currentTime } = audioRef.current;
         const progressTime = (currentTime * 100) / duration;
         setProgress(progressTime);
-        if (progressTime === 100) togglePlay();
+        if (progressTime === 100) {
+          setIsPlaying(false);
+          audioRef.current.pause();
+        }
       }
     }, 100);
     return () => {
       clearInterval(timer);
     };
+
+    // eslint-disable-next-line
   }, []);
 
   useEffect(() => {
