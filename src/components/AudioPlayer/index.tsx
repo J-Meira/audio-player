@@ -26,6 +26,7 @@ export const AudioPlayer = ({
 }: IAudioPlayerProps) => {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
   const [progress, setProgress] = useState(0);
 
   const togglePlay = () => {
@@ -52,11 +53,13 @@ export const AudioPlayer = ({
     return `${formatMinutes}:${formatSeconds}`;
   };
 
-  const toggleMute = () => {
+  useEffect(() => {
     if (audioRef.current) {
-      audioRef.current.muted = !audioRef.current.muted;
+      audioRef.current.muted = isMuted;
     }
-  };
+
+    // eslint-disable-next-line
+  }, [isMuted]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -113,12 +116,8 @@ export const AudioPlayer = ({
                 }
                 label='Auto Play'
               />
-              <IconButton onClick={toggleMute}>
-                {audioRef.current?.muted ? (
-                  <VolumeOffIcon />
-                ) : (
-                  <VolumeUpIcon />
-                )}
+              <IconButton onClick={() => setIsMuted(!isMuted)}>
+                {isMuted ? <VolumeOffIcon /> : <VolumeUpIcon />}
               </IconButton>
             </Box>
           </Box>
