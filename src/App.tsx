@@ -1,26 +1,22 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
-
-function App() {
+import { FormControlLabel, Paper, Switch } from '@mui/material';
+import { AudioPlayer, useThemeContext } from './components';
+import demoMp3 from './demo.mp3';
+import { useState } from 'react';
+export const App = () => {
+  const { dark, onChangeMode } = useThemeContext();
+  const [autoPlay, setAutoPlay] = useState(false);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Paper square className='app'>
+      <AudioPlayer
+        src={demoMp3}
+        autoPlay={autoPlay}
+        toggleAutoPlay={() => setAutoPlay(!autoPlay)}
+      />
+      <FormControlLabel
+        sx={{ width: '100%', display: 'flex', justifyContent: 'center' }}
+        control={<Switch checked={dark} onChange={() => onChangeMode()} />}
+        label={dark ? 'DARK' : 'LIGHT'}
+      />
+    </Paper>
   );
-}
-
-export default App;
+};
