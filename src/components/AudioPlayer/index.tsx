@@ -31,11 +31,9 @@ export const AudioPlayer = ({
 
   const togglePlay = () => {
     if (isPlaying) {
-      setIsPlaying(false);
-      audioRef.current?.pause();
+      pause();
     } else {
-      setIsPlaying(true);
-      audioRef.current?.play();
+      play();
     }
   };
 
@@ -53,6 +51,23 @@ export const AudioPlayer = ({
     return `${formatMinutes}:${formatSeconds}`;
   };
 
+  const pause = () => {
+    setIsPlaying(false);
+    audioRef.current?.pause();
+  };
+
+  const play = () => {
+    setIsPlaying(true);
+    audioRef.current?.play();
+  };
+
+  useEffect(() => {
+    window.addEventListener('blur', pause);
+    window.addEventListener('focus', play);
+
+    // eslint-disable-next-line
+  }, []);
+
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.muted = isMuted;
@@ -68,8 +83,7 @@ export const AudioPlayer = ({
         const progressTime = (currentTime * 100) / duration;
         setProgress(progressTime);
         if (progressTime === 100) {
-          setIsPlaying(false);
-          audioRef.current.pause();
+          pause();
         }
       }
     }, 100);
@@ -82,8 +96,7 @@ export const AudioPlayer = ({
 
   useEffect(() => {
     if (autoPlay) {
-      setIsPlaying(true);
-      audioRef.current?.play();
+      play();
     }
 
     // eslint-disable-next-line
