@@ -6,7 +6,7 @@ import {
   FormControlLabel,
   Grid,
   IconButton,
-  LinearProgress,
+  Slider,
   Switch,
   Typography,
 } from '@mui/material';
@@ -25,15 +25,14 @@ export const AudioPlayer = ({
   toggleAutoPlay,
 }: IAudioPlayerProps) => {
   const audioRef = useRef<HTMLAudioElement>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [progress, setProgress] = useState(0);
 
   const togglePlay = () => {
-    if (isPlaying) {
-      pause();
+    if (audioRef.current?.paused) {
+      audioRef.current?.play();
     } else {
-      play();
+      audioRef.current?.pause();
     }
   };
 
@@ -51,23 +50,6 @@ export const AudioPlayer = ({
     return `${formatMinutes}:${formatSeconds}`;
   };
 
-  const pause = () => {
-    setIsPlaying(false);
-    audioRef.current?.pause();
-  };
-
-  const play = () => {
-    setIsPlaying(true);
-    audioRef.current?.play();
-  };
-
-  useEffect(() => {
-    window.addEventListener('blur', pause);
-    window.addEventListener('focus', play);
-
-    // eslint-disable-next-line
-  }, []);
-
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.muted = isMuted;
@@ -82,11 +64,11 @@ export const AudioPlayer = ({
         const { duration, currentTime } = audioRef.current;
         const progressTime = (currentTime * 100) / duration;
         setProgress(progressTime);
-        if (progressTime === 100) {
-          pause();
+        if (progress === 100) {
+          audioRef.current?.pause();
         }
       }
-    }, 100);
+    }, 10);
     return () => {
       clearInterval(timer);
     };
@@ -96,7 +78,7 @@ export const AudioPlayer = ({
 
   useEffect(() => {
     if (autoPlay) {
-      play();
+      audioRef.current?.play();
     }
 
     // eslint-disable-next-line
@@ -109,7 +91,7 @@ export const AudioPlayer = ({
       <Grid item xs={12} md={4}>
         <Card className='player-card' elevation={4}>
           <IconButton onClick={togglePlay} className='player-button'>
-            {isPlaying ? <PauseIcon /> : <PlayIcon />}
+            {audioRef.current?.paused ? <PlayIcon /> : <PauseIcon />}
           </IconButton>
           <Box className='player-progress'>
             <Box className='player-timers'>
@@ -118,7 +100,16 @@ export const AudioPlayer = ({
               </Typography>
               <Typography variant='caption'>{getTime('total')}</Typography>
             </Box>
-            <LinearProgress variant='determinate' value={progress} />
+            <Slider
+              min={0}
+              max={audioRef.current?.duration || 100}
+              value={audioRef.current?.currentTime || 0}
+              onChange={(_, newValue) =>
+                audioRef.current
+                  ? (audioRef.current.currentTime = newValue as number)
+                  : null
+              }
+            />
             <Box className='player-timers'>
               <FormControlLabel
                 control={
